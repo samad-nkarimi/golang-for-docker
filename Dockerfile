@@ -1,15 +1,15 @@
-# Start from the official Go image
-FROM golang:1.22
+# Build stage
+FROM golang:1.21-alpine AS builder
 
-# Set working directory
 WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN go build -o app
 
-# Copy go.mod and source files
-COPY go.mod ./
-COPY main.go ./
-
-# Build the binary
-RUN go build -o app .
-
-# Command to run the app
-CMD ["./app"]
+# Final image
+FROM alpine:latest
+RUN apk add --no-cache ca-certificates
+COPY --from=builder /app/app /app
+EXPOSE 10000
+CMD ["/app"]

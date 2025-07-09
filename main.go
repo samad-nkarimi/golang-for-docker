@@ -6,15 +6,26 @@ import (
 	"for-docker/models"
 	"for-docker/repository"
 	"net/http"
+	"os"
 	// "os"
-
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 	// "gorm.io/gorm"
 )
 
+func getEnv(key, fallback string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return fallback
+}
+
 func main() {
-	godotenv.Load(".env")
-	config.InitDB()
+	config.LoadEnv()
+
+	port := getEnv("PORT", "10000")
+	dbURL := getEnv("DATABASE_URL", "postgres://sam:sampass@localhost:5432/mygodb?sslmode=disable")
+	print(dbURL)
+	config.InitDB(dbURL)
 
 	// if os.Getenv("ENV") == "development" {
 	// 	config.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&models.ClientIP{})
@@ -34,5 +45,5 @@ func main() {
 		}
 	})
 
-	http.ListenAndServe(":10000", nil)
+	http.ListenAndServe(":"+port, nil)
 }

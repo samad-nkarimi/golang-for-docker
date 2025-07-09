@@ -6,15 +6,19 @@ import (
 	"log"
 	"os"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
 
-func InitDB() {
-	dsn := os.Getenv("DATABASE_URL") // e.g. postgres://user:pass@localhost:5432/db?sslmode=disable
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+func InitDB(dbURL string) {
+	// dsn := os.Getenv(dbURL)
+	println("")
+	println(dbURL)
+
+	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 	if err != nil {
 		log.Fatal("❌ Failed to connect to DB:", err)
 	}
@@ -30,4 +34,18 @@ func InitDB() {
 	}
 
 	fmt.Println("✅ Database connected")
+}
+
+func LoadEnv() {
+	env := os.Getenv("ENV")
+
+	if env == "" || env == "development" {
+		err := godotenv.Load(".env.dev")
+		if err != nil {
+			log.Println("Warning: Could not load .env.dev file")
+		} else {
+			println("env loaded")
+		}
+	}
+	// For production, rely on real environment variables
 }

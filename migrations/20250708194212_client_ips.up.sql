@@ -1,0 +1,5 @@
+CREATE TABLE client_ips (
+	id SERIAL PRIMARY KEY,
+	ip TEXT NOT NULL,
+	created_at TIMESTAMPTZ DEFAULT NOW()
+);

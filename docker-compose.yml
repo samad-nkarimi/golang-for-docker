@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: sam
+      POSTGRES_PASSWORD: sampass
+      POSTGRES_DB: mygodb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  app:
+    build:
+      context: .
+    depends_on:
+      - db
+    ports:
+      - "10000:10000"
+    environment:
+      PORT: 10000
+      ENV: development
+      DATABASE_URL: postgres://sam:sampass@db:5432/mygodb?sslmode=disable
+
+volumes:
+  pgdata:

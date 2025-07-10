@@ -14,7 +14,7 @@ RUN apk add --no-cache ca-certificates
 
 WORKDIR /app
 COPY --from=builder /app/app ./app
-COPY .env .env
+COPY .env.dev .env
 
 EXPOSE 10000
 CMD ["./app"]
